@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:mvcs="robotlegs.bender.bundles.mvcs.*"
+			   xmlns:rl2="http://ns.robotlegs.org/flex/rl2"
+			   xmlns:views="robotlegs.bender.P2PTest.views.*"
+			   xmlns:p2pconf="robotlegs.bender.P2PTest.config.*"
+			   width="1000" height="1000"
+			   >
+	<fx:Declarations>
+		<rl2:ContextBuilder>
+			<mvcs:MVCSBundle/>
+			<p2pconf:P2ptestConfig/>
+		</rl2:ContextBuilder>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import com.adobe.viewsource.ViewSource;
+			import org.osmf.events.*;
+			import mx.utils.ObjectUtil;
+			import robotlegs.bender.P2PTest.models.vo.PostMsg;
+			
+			private const TOBE	: String ="rtmfp://fms.2be.com.tw";
+			private const UMS	: String ="http://192.168.3.113";
+			private const CIRRUS : String = "rtmfp://p2p.rtmfp.net";
+			private const DEVKEY : String = "bcca91ad645ebd232ef1ff21-6bd3cc2034b1";
+			private var netConnection : NetConnection;
+			private var netGroup : NetGroup;
+			private var joinGroup:Boolean = false;
+			private var sequenceNumber:int = 0;
+			private var netStream:NetStream;
+			private var vid:Video;
+			private var vidContainer:UIComponent;
+			private function init() : void 
+			{
+				netConnection = new NetConnection();
+				netConnection.client = this;
+				netConnection.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);			
+			}
+			
+			private function connectHandler(e:NetStatusEvent) : void 
+			{
+				trace(e.info.code);
+				pushMsg(e.info.code);
+				switch (e.info.code)
+				{
+					case "NetConnection.Connect.Closed":
+					case "NetConnection.Connect.Failed":
+					case "NetConnection.Connect.Rejected":
+					case "NetConnection.Connect.AppShutdown":
+					case "NetConnection.Connect.InvalidApp":
+						onDisconnect();
+						break; 
+					case "NetConnection.Connect.Success":
+						//						trace('netConnection.nearID', netConnection.nearID);
+						//						pushMsg('netConnection.nearID:'+ netConnection.nearID);
+						onConnect();
+						break;
+					
+					case "NetStream.Connect.Success":
+						onNetStreamConnect();
+						break;
+					case "NetStream.Connect.Rejected":
+						break;
+					case "NetStream.Connect.Failed":
+						doDisconnect();
+						break;
+					case "NetStream.MulticastStream.Reset":
+						break;
+					case "NetStream.Buffer.Full":
+						break;
+					
+					case "NetGroup.Connect.Success":
+						onNetGroupConnect();
+						break;
+					case "NetGroup.Connect.Rejected":
+						break;
+					case "NetGroup.Connect.Failed":
+						break;
+					doDisconnect();
+					break;
+					case "NetGroup.Posting.Notify":
+						var msg:Object = e.info.message;
+						pushMsg( msg.user+" says:"+msg.text );
+						break;
+					case "NetGroup.SendTo.Notify":
+					case "NetGroup.LocalCoverage.Notify":
+					case "NetGroup.Neighbor.Connect":
+					case "NetGroup.Neighbor.Disconnect":
+					case "NetGroup.MulticastStream.PublishNotify":
+					case "NetGroup.MulticastStream.UnpublishNotify":
+					case "NetGroup.Replication.Fetch.SendNotify":
+					case "NetGroup.Replication.Fetch.Failed":
+					case "NetGroup.Replication.Fetch.Result":
+					case "NetGroup.Replication.Request":
+						break;
+				}
+			}
+			
+			private function onDisconnect() : void 
+			{
+				pushMsg("Disconnected");
+				netConnection = null;
+				netStream = null;
+				netGroup = null;
+				connect_btn.label="connect";
+				joinGroup = false;
+			}
+			
+			private function onConnect() : void 
+			{
+				connect_btn.label="disconnect";
+				
+				var groupSpecifier:GroupSpecifier = new GroupSpecifier(groupName_ti.text);
+				//				groupSpecifier.postingEnabled = true;
+				groupSpecifier.multicastEnabled = true;
+				groupSpecifier.setPublishPassword(pwd_ti.text);
+				groupSpecifier.serverChannelEnabled = true;
+				
+				//				netGroup = new NetGroup(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
+				//				netGroup.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
+				
+				pushMsg( '\ngroupSpecifier.groupspecWithAuthorizations():\n'    + groupSpecifier.groupspecWithAuthorizations() );
+				pushMsg( '\ngroupSpecifier.groupspecWithoutAuthorizations():\n' + groupSpecifier.groupspecWithoutAuthorizations() );
+				pushMsg( '\ngroupSpecifier.toString():\n' + groupSpecifier.toString() );
+				
+				netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
+				netStream.client = this;
+				netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
+			}
+			
+			private function connect() : void 
+			{
+				if (connect_btn.label =="disconnect") {
+					netConnection.close();
+					return;
+				}
+//				var p2p:String = TOBE+"/"+"multicast";
+//				var p2p:String = UMS+"/"+"XP3";
+				var p2p:String = UMS+"/"+"1";
+				//				var p2p:String = TOBE+"/"+"p2p/test";
+				pushMsg('connect '+p2p);
+				//				netConnection.connect(CIRRUS, DEVKEY);
+				netConnection.connect(p2p);
+			}
+			
+			private function onNetStreamConnect() : void
+			{
+			}
+			
+			private function doDisconnect() : void 
+			{
+			}
+			
+			private function onNetGroupConnect() : void
+			{
+				//pushMsg(netGroup.info.toString());
+				joinGroup = true;
+			}
+			
+			private function pushMsg(msg:String) : void
+			{
+				msg_ta.appendText(msg+"\n");
+			}
+			
+			private function post(e:MouseEvent) : void
+			{
+				if ( joinGroup ) {
+					var msg:robotlegs.bender.P2PTest.models.vo.PostMsg = new PostMsg();
+					msg.user = user_ti.text;
+					msg.text = chat_ti.text;
+					msg.sequence = sequenceNumber++;
+					msg.sender = netConnection.nearID; 
+					netGroup.post(msg);
+				}
+				chat_ti.text = "";
+			}
+			public function onBWDone(...rest):void
+			{
+				trace('onBWDone();'+ rest, rest.length);
+				for (var i:int=0; i<rest.length; ++i) {
+					trace("\t"+i+":"+rest[i]);
+				}
+			}
+			public function onMetaData(info:Object):void
+			{
+				trace('onMetaData');
+				for( var p:String in info)
+				{
+					trace(p, info[p]);
+				}
+			}
+			public function onPlayStatus(info:Object):void
+			{
+				trace('onPlayStatus');
+				for( var p:String in info)
+				{
+					trace('*', p, info[p]);
+				}
+			}
+			private function play():void
+			{
+				trace('play');
+				
+				vid = new Video(320,240);
+				vidContainer = new UIComponent();
+				vidContainer.addChild(vid);
+				
+				videoPlaceholder.addElement(vidContainer);
+				netStream.play('livestream');
+				vid.attachNetStream(netStream);
+			}
+			
+			private function checkGroupString() :void
+			{
+				var g:GroupSpecifier = new GroupSpecifier(chk_groupName_ti.text);
+				if ( p2p_cb.selected) {
+					g.peerToPeerDisabled = true;						
+				}
+				if (password.text != "") {
+					g.setPublishPassword(password.text);
+				}
+				if ( unigue_cb.selected ) {
+					g.makeUnique();
+				}
+				gstring_ta.text = 'groupspecWithAuthorizations:'+g.groupspecWithAuthorizations()+'\ngroupspecWithoutAuthorizations:'+g.groupspecWithoutAuthorizations();
+				gstring_ta.text += '\ntostring:'+g.toString();
+			}
+		]]>
+	</fx:Script>
+	<s:VGroup x="5" y="5">
+		<s:HGroup>
+			<s:VGroup>
+				<s:Label text="groupName"/>
+				<s:TextInput id="groupName_ti" width="300">gabe</s:TextInput>
+				<s:Label text="password"/>
+				<s:TextInput id="pwd_ti" width="300" displayAsPassword="true">aaaa</s:TextInput>
+				<s:Button id="connect_btn" label="connect" click="connect()" />
+				<s:Label text="connect message"/>
+				<s:TextArea id="msg_ta" width="500" height="200" editable="false"/>
+			</s:VGroup>
+			<s:VGroup>
+				<s:Label text="groupName"/>
+				<s:TextInput id="chk_groupName_ti" width="300"/>
+				<s:TextArea id="gstring_ta" width="500"/>
+				<s:TextInput id="password" width="300"/>
+				<s:CheckBox label="make unigue" id="unigue_cb"/>
+				<s:CheckBox label="peerToPeerDisabled" id="p2p_cb"/>
+				<s:Button id="chkName_btn" label="check" click="checkGroupString()" />
+			</s:VGroup>
+		</s:HGroup>
+		<s:Label text="test pass message within group"/>
+		<s:TextInput id="user_ti" width="500" text="gabe"/>
+		<s:TextInput id="chat_ti" width="500" text="chat message"/>
+		<s:Button id="post_btn" label="post" click="post(event)" />
+		<s:Button id="play_btn" label="play" click="play()"/>
+		<s:BorderContainer backgroundColor="#000000" id="videoPlaceholder" width="500" height="500">
+		</s:BorderContainer>
+	</s:VGroup>
+</s:Application>

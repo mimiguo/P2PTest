@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Label text="groupName"/>
+	<s:TextInput id="groupName_ti" width="300">gabe</s:TextInput>
+	<s:Label text="password"/>
+	<s:TextInput id="pwd_ti" width="300" displayAsPassword="true">aaaa</s:TextInput>
+	<s:Button id="connect_btn" label="connect" click="connect()" />
+	<s:Label text="connect message"/>
+	<s:TextArea id="msg_ta" width="500" height="200" editable="false"/>
+</s:VGroup>
