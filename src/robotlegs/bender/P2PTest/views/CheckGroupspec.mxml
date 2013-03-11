@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+	>
+	<s:Label text="groupName"/>
+	<s:TextInput id="chk_groupName_ti" width="300"/>
+	<s:TextArea id="gstring_ta" width="500"/>
+	<s:TextInput id="password" width="300"/>
+	<s:CheckBox label="make unigue" id="unigue_cb"/>
+	<s:CheckBox label="peerToPeerDisabled" id="p2p_cb"/>
+	<!--<s:Button id="chkName_btn" label="check" click="checkGroupString()" />-->
+	<s:Button id="chkName_btn" label="check" />
+</s:VGroup>

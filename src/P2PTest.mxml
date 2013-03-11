@@ -105,18 +105,18 @@
 				netConnection = null;
 				netStream = null;
 				netGroup = null;
-				connect_btn.label="connect";
+				testConnection.connect_btn.label="connect";
 				joinGroup = false;
 			}
 			
 			private function onConnect() : void 
 			{
-				connect_btn.label="disconnect";
+				testConnection.connect_btn.label="disconnect";
 				
-				var groupSpecifier:GroupSpecifier = new GroupSpecifier(groupName_ti.text);
+				var groupSpecifier:GroupSpecifier = new GroupSpecifier(testConnection.groupName_ti.text);
 				//				groupSpecifier.postingEnabled = true;
 				groupSpecifier.multicastEnabled = true;
-				groupSpecifier.setPublishPassword(pwd_ti.text);
+				groupSpecifier.setPublishPassword(testConnection.pwd_ti.text);
 				groupSpecifier.serverChannelEnabled = true;
 				
 				//				netGroup = new NetGroup(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
@@ -131,20 +131,20 @@
 				netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
 			}
 			
-			private function connect() : void 
+			/* private function connect() : void 
 			{
-				if (connect_btn.label =="disconnect") {
+				if (testConnection.connect_btn.label =="disconnect") {
 					netConnection.close();
 					return;
 				}
-//				var p2p:String = TOBE+"/"+"multicast";
+				var p2p:String = TOBE+"/"+"multicast";
 //				var p2p:String = UMS+"/"+"XP3";
-				var p2p:String = UMS+"/"+"1";
+//				var p2p:String = UMS+"/"+"1";
 				//				var p2p:String = TOBE+"/"+"p2p/test";
 				pushMsg('connect '+p2p);
 				//				netConnection.connect(CIRRUS, DEVKEY);
 				netConnection.connect(p2p);
-			}
+			} */
 			
 			private function onNetStreamConnect() : void
 			{
@@ -162,7 +162,7 @@
 			
 			private function pushMsg(msg:String) : void
 			{
-				msg_ta.appendText(msg+"\n");
+				testConnection.msg_ta.appendText(msg+"\n");
 			}
 			
 			private function post(e:MouseEvent) : void
@@ -215,41 +215,25 @@
 			
 			private function checkGroupString() :void
 			{
-				var g:GroupSpecifier = new GroupSpecifier(chk_groupName_ti.text);
-				if ( p2p_cb.selected) {
+				var g:GroupSpecifier = new GroupSpecifier(checkGroupspec.chk_groupName_ti.text);
+				if ( checkGroupspec.p2p_cb.selected) {
 					g.peerToPeerDisabled = true;						
 				}
-				if (password.text != "") {
-					g.setPublishPassword(password.text);
+				if (checkGroupspec.password.text != "") {
+					g.setPublishPassword(checkGroupspec.password.text);
 				}
-				if ( unigue_cb.selected ) {
+				if ( checkGroupspec.unigue_cb.selected ) {
 					g.makeUnique();
 				}
-				gstring_ta.text = 'groupspecWithAuthorizations:'+g.groupspecWithAuthorizations()+'\ngroupspecWithoutAuthorizations:'+g.groupspecWithoutAuthorizations();
-				gstring_ta.text += '\ntostring:'+g.toString();
+				checkGroupspec.gstring_ta.text = 'groupspecWithAuthorizations:'+g.groupspecWithAuthorizations()+'\ngroupspecWithoutAuthorizations:'+g.groupspecWithoutAuthorizations();
+				checkGroupspec.gstring_ta.text += '\ntostring:'+g.toString();
 			}
 		]]>
 	</fx:Script>
 	<s:VGroup x="5" y="5">
 		<s:HGroup>
-			<s:VGroup>
-				<s:Label text="groupName"/>
-				<s:TextInput id="groupName_ti" width="300">gabe</s:TextInput>
-				<s:Label text="password"/>
-				<s:TextInput id="pwd_ti" width="300" displayAsPassword="true">aaaa</s:TextInput>
-				<s:Button id="connect_btn" label="connect" click="connect()" />
-				<s:Label text="connect message"/>
-				<s:TextArea id="msg_ta" width="500" height="200" editable="false"/>
-			</s:VGroup>
-			<s:VGroup>
-				<s:Label text="groupName"/>
-				<s:TextInput id="chk_groupName_ti" width="300"/>
-				<s:TextArea id="gstring_ta" width="500"/>
-				<s:TextInput id="password" width="300"/>
-				<s:CheckBox label="make unigue" id="unigue_cb"/>
-				<s:CheckBox label="peerToPeerDisabled" id="p2p_cb"/>
-				<s:Button id="chkName_btn" label="check" click="checkGroupString()" />
-			</s:VGroup>
+			<views:TestConnection id="testConnection"></views:TestConnection>
+			<views:CheckGroupspec id="checkGroupspec"></views:CheckGroupspec>
 		</s:HGroup>
 		<s:Label text="test pass message within group"/>
 		<s:TextInput id="user_ti" width="500" text="gabe"/>

@@ -1,0 +1,10 @@
+package robotlegs.bender.P2PTest.models
+{
+	public class Server
+	{
+	    static public const TOBE:String 			= "rtmfp://fms.2be.com.tw";
+		static public const UMS:String 				= "http://192.168.3.113";
+		static public const CIRRUS:String 			= "rtmfp://p2p.rtmfp.net";
+		static public const CIRRUS_DEVKEY:String 	= "bcca91ad645ebd232ef1ff21-6bd3cc2034b1";
+	}
+}

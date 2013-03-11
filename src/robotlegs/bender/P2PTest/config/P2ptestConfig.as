@@ -8,13 +8,8 @@
 package robotlegs.bender.P2PTest.config
 {
 	import org.swiftsuspenders.Injector;
-
-//	import robotlegs.bender.P2PTest.models.TodoModel;
-//	import robotlegs.bender.P2PTest.views.TodoItemRenderer;
-//	import robotlegs.bender.P2PTest.views.TodoItemRendererMediator;
-//	import robotlegs.bender.P2PTest.views.TodoMediator;
-//	import robotlegs.bender.P2PTest.views.TodoPM;
-//	import robotlegs.bender.P2PTest.views.TodoView;
+	
+	import robotlegs.bender.P2PTest.views.*;
 	import robotlegs.bender.extensions.mediatorMap.api.IMediatorMap;
 	import robotlegs.bender.framework.api.IConfig;
 
@@ -32,6 +27,7 @@ package robotlegs.bender.P2PTest.config
 //			injector.map(TodoPM).asSingleton();
 //			mediatorMap.map(TodoView).toMediator(TodoMediator);
 //			mediatorMap.map(TodoItemRenderer).toMediator(TodoItemRendererMediator);
+			mediatorMap.map(TestConnection).toMediator(TestConnectionMediator);
 		}
 	}
 }
