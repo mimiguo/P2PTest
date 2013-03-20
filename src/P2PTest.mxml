@@ -5,13 +5,13 @@
 			   xmlns:mvcs="robotlegs.bender.bundles.mvcs.*"
 			   xmlns:rl2="http://ns.robotlegs.org/flex/rl2"
 			   xmlns:views="robotlegs.bender.P2PTest.views.*"
-			   xmlns:p2pconf="robotlegs.bender.P2PTest.config.*"
+			   xmlns:config="robotlegs.bender.P2PTest.config.*"
 			   width="1000" height="1000"
 			   >
 	<fx:Declarations>
 		<rl2:ContextBuilder>
 			<mvcs:MVCSBundle/>
-			<p2pconf:P2ptestConfig/>
+			<config:P2ptestConfig/>
 		</rl2:ContextBuilder>
 	</fx:Declarations>
 	<fx:Script>
@@ -22,143 +22,12 @@
 			import mx.utils.ObjectUtil;
 			import robotlegs.bender.P2PTest.models.vo.PostMsg;
 			
-			private const TOBE	: String ="rtmfp://fms.2be.com.tw";
-			private const UMS	: String ="http://192.168.3.113";
-			private const CIRRUS : String = "rtmfp://p2p.rtmfp.net";
-			private const DEVKEY : String = "bcca91ad645ebd232ef1ff21-6bd3cc2034b1";
-			private var netConnection : NetConnection;
 			private var netGroup : NetGroup;
 			private var joinGroup:Boolean = false;
 			private var sequenceNumber:int = 0;
 			private var netStream:NetStream;
 			private var vid:Video;
 			private var vidContainer:UIComponent;
-			private function init() : void 
-			{
-				netConnection = new NetConnection();
-				netConnection.client = this;
-				netConnection.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);			
-			}
-			
-			private function connectHandler(e:NetStatusEvent) : void 
-			{
-				trace(e.info.code);
-				pushMsg(e.info.code);
-				switch (e.info.code)
-				{
-					case "NetConnection.Connect.Closed":
-					case "NetConnection.Connect.Failed":
-					case "NetConnection.Connect.Rejected":
-					case "NetConnection.Connect.AppShutdown":
-					case "NetConnection.Connect.InvalidApp":
-						onDisconnect();
-						break; 
-					case "NetConnection.Connect.Success":
-						//						trace('netConnection.nearID', netConnection.nearID);
-						//						pushMsg('netConnection.nearID:'+ netConnection.nearID);
-						onConnect();
-						break;
-					
-					case "NetStream.Connect.Success":
-						onNetStreamConnect();
-						break;
-					case "NetStream.Connect.Rejected":
-						break;
-					case "NetStream.Connect.Failed":
-						doDisconnect();
-						break;
-					case "NetStream.MulticastStream.Reset":
-						break;
-					case "NetStream.Buffer.Full":
-						break;
-					
-					case "NetGroup.Connect.Success":
-						onNetGroupConnect();
-						break;
-					case "NetGroup.Connect.Rejected":
-						break;
-					case "NetGroup.Connect.Failed":
-						break;
-					doDisconnect();
-					break;
-					case "NetGroup.Posting.Notify":
-						var msg:Object = e.info.message;
-						pushMsg( msg.user+" says:"+msg.text );
-						break;
-					case "NetGroup.SendTo.Notify":
-					case "NetGroup.LocalCoverage.Notify":
-					case "NetGroup.Neighbor.Connect":
-					case "NetGroup.Neighbor.Disconnect":
-					case "NetGroup.MulticastStream.PublishNotify":
-					case "NetGroup.MulticastStream.UnpublishNotify":
-					case "NetGroup.Replication.Fetch.SendNotify":
-					case "NetGroup.Replication.Fetch.Failed":
-					case "NetGroup.Replication.Fetch.Result":
-					case "NetGroup.Replication.Request":
-						break;
-				}
-			}
-			
-			private function onDisconnect() : void 
-			{
-				pushMsg("Disconnected");
-				netConnection = null;
-				netStream = null;
-				netGroup = null;
-				testConnection.connect_btn.label="connect";
-				joinGroup = false;
-			}
-			
-			private function onConnect() : void 
-			{
-				testConnection.connect_btn.label="disconnect";
-				
-				var groupSpecifier:GroupSpecifier = new GroupSpecifier(testConnection.groupName_ti.text);
-				//				groupSpecifier.postingEnabled = true;
-				groupSpecifier.multicastEnabled = true;
-				groupSpecifier.setPublishPassword(testConnection.pwd_ti.text);
-				groupSpecifier.serverChannelEnabled = true;
-				
-				//				netGroup = new NetGroup(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
-				//				netGroup.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
-				
-				pushMsg( '\ngroupSpecifier.groupspecWithAuthorizations():\n'    + groupSpecifier.groupspecWithAuthorizations() );
-				pushMsg( '\ngroupSpecifier.groupspecWithoutAuthorizations():\n' + groupSpecifier.groupspecWithoutAuthorizations() );
-				pushMsg( '\ngroupSpecifier.toString():\n' + groupSpecifier.toString() );
-				
-				netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
-				netStream.client = this;
-				netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
-			}
-			
-			/* private function connect() : void 
-			{
-				if (testConnection.connect_btn.label =="disconnect") {
-					netConnection.close();
-					return;
-				}
-				var p2p:String = TOBE+"/"+"multicast";
-//				var p2p:String = UMS+"/"+"XP3";
-//				var p2p:String = UMS+"/"+"1";
-				//				var p2p:String = TOBE+"/"+"p2p/test";
-				pushMsg('connect '+p2p);
-				//				netConnection.connect(CIRRUS, DEVKEY);
-				netConnection.connect(p2p);
-			} */
-			
-			private function onNetStreamConnect() : void
-			{
-			}
-			
-			private function doDisconnect() : void 
-			{
-			}
-			
-			private function onNetGroupConnect() : void
-			{
-				//pushMsg(netGroup.info.toString());
-				joinGroup = true;
-			}
 			
 			private function pushMsg(msg:String) : void
 			{
@@ -172,34 +41,12 @@
 					msg.user = user_ti.text;
 					msg.text = chat_ti.text;
 					msg.sequence = sequenceNumber++;
-					msg.sender = netConnection.nearID; 
+//					msg.sender = netConnection.nearID; 
 					netGroup.post(msg);
 				}
 				chat_ti.text = "";
 			}
-			public function onBWDone(...rest):void
-			{
-				trace('onBWDone();'+ rest, rest.length);
-				for (var i:int=0; i<rest.length; ++i) {
-					trace("\t"+i+":"+rest[i]);
-				}
-			}
-			public function onMetaData(info:Object):void
-			{
-				trace('onMetaData');
-				for( var p:String in info)
-				{
-					trace(p, info[p]);
-				}
-			}
-			public function onPlayStatus(info:Object):void
-			{
-				trace('onPlayStatus');
-				for( var p:String in info)
-				{
-					trace('*', p, info[p]);
-				}
-			}
+			
 			private function play():void
 			{
 				trace('play');
