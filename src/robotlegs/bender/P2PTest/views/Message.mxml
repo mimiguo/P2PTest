@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<s:Label text="test pass message within group"/>
+	<s:TextInput id="user_ti" width="500" text="gabe"/>
+	<s:TextInput id="chat_ti" width="500" text="chat message"/>
+	<s:Button id="post_btn" label="post" click="post(event)" />
+</s:VGroup>

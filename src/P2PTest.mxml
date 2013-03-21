@@ -38,13 +38,13 @@
 			{
 				if ( joinGroup ) {
 					var msg:robotlegs.bender.P2PTest.models.vo.PostMsg = new PostMsg();
-					msg.user = user_ti.text;
-					msg.text = chat_ti.text;
+//					msg.user = user_ti.text;
+//					msg.text = chat_ti.text;
 					msg.sequence = sequenceNumber++;
 //					msg.sender = netConnection.nearID; 
 					netGroup.post(msg);
 				}
-				chat_ti.text = "";
+//				chat_ti.text = "";
 			}
 			
 			private function play():void
@@ -82,10 +82,6 @@
 			<views:TestConnection id="testConnection"></views:TestConnection>
 			<views:CheckGroupspec id="checkGroupspec"></views:CheckGroupspec>
 		</s:HGroup>
-		<s:Label text="test pass message within group"/>
-		<s:TextInput id="user_ti" width="500" text="gabe"/>
-		<s:TextInput id="chat_ti" width="500" text="chat message"/>
-		<s:Button id="post_btn" label="post" click="post(event)" />
 		<s:Button id="play_btn" label="play" click="play()"/>
 		<s:BorderContainer backgroundColor="#000000" id="videoPlaceholder" width="500" height="500">
 		</s:BorderContainer>
