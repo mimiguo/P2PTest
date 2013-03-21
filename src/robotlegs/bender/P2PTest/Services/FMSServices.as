@@ -52,12 +52,11 @@ package robotlegs.bender.P2PTest.Services
 				case NetEventList.NETCONNECTION_CONNECT_INVALIDAPP:
 					onDisconnect();
 					break; 
-				case "NetConnection.Connect.Success":
+				case NetEventList.NETCONNECTION_CONNECT_SUCCESS:
 //						trace('netConnection.nearID', netConnection.nearID);
 //						pushMsg('netConnection.nearID:'+ netConnection.nearID);
 					onConnect();
 					break;
-				
 				case "NetStream.Connect.Success":
 					onNetStreamConnect();
 					break;
@@ -104,14 +103,13 @@ package robotlegs.bender.P2PTest.Services
 			netConnection = null;
 			netStream = null;
 			netGroup = null;
-//			testConnection.connect_btn.label="connect";
 			joinGroup = false;
+			eventDispatcher.dispatchEvent(new Event("Disconnected"));
 		}
 		
 		private function onConnect() : void 
 		{
-//			testConnection.connect_btn.label="disconnect";
-			trace(model.groupSpecifier);	
+			eventDispatcher.dispatchEvent(new Event(NetEventList.NETCONNECTION_CONNECT_SUCCESS));
 			var groupSpecifier:GroupSpecifier = new GroupSpecifier(model.groupSpecifier.groupName);
 			groupSpecifier.postingEnabled = true;
 			groupSpecifier.multicastEnabled = true;

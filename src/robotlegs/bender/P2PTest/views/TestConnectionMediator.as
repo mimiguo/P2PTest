@@ -6,6 +6,7 @@ package robotlegs.bender.P2PTest.views
 	import flash.events.TextEvent;
 	
 	import robotlegs.bender.P2PTest.Event.EventsList;
+	import robotlegs.bender.P2PTest.Event.NetEventList;
 	import robotlegs.bender.P2PTest.models.ServerConfig;
 	import robotlegs.bender.P2PTest.models.vo.GroupSpecifierVO;
 	import robotlegs.bender.P2PTest.views.*;
@@ -19,6 +20,9 @@ package robotlegs.bender.P2PTest.views
 		public override function initialize():void
 		{
 			addViewListener(MouseEvent.CLICK, connect);
+			addContextListener(NetEventList.NETCONNECTION_CONNECT_SUCCESS, onConnect);
+			addContextListener("Disconnected", function():void{view.connect_btn.label = "connect";});
+//			eventDispatcher.addEventListener(NetEventList.NETCONNECTION_CONNECT_SUCCESS, onConnect);
 		}
 		
 		private function connect(e:MouseEvent) : void 
@@ -31,6 +35,10 @@ package robotlegs.bender.P2PTest.views
 			vo.passWord  = view.pwd_ti.text;
 			var data:String = JSON.stringify(vo);
 			dispatch(new TextEvent(EventsList.STARTCONNECT, false, false, data));
+		}
+		private function onConnect(e:Event):void
+		{
+			view.connect_btn.label = "disconnect";
 		}
 	}
 }
