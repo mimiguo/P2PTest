@@ -25,7 +25,7 @@ package robotlegs.bender.P2PTest.Services
 		private var netGroup : NetGroup;
 		private var joinGroup:Boolean = false;
 		private var sequenceNumber:int = 0;
-		private var netStream:NetStream;
+		public var netStream:NetStream;
 		
 		public function FMSServices()
 		{
@@ -36,8 +36,9 @@ package robotlegs.bender.P2PTest.Services
 		
 		public function startConnect():void
 		{
-			trace(ServerConfig.TOBE+"/"+ ServerConfig.Application_MULTICAST);
-			netConnection.connect(ServerConfig.TOBE+"/"+ServerConfig.Application_MULTICAST);
+			model.streamKey = ServerConfig.STREAM_KEY_WEBCAM;
+//			netConnection.connect(ServerConfig.TOBE+"/"+ServerConfig.Application_MULTICAST);
+			netConnection.connect(ServerConfig.TOBE+"/"+ServerConfig.Application_LIVE);
 		}
 		
 		private function connectHandler(e:NetStatusEvent) : void 
@@ -110,11 +111,19 @@ package robotlegs.bender.P2PTest.Services
 		private function onConnect() : void 
 		{
 			eventDispatcher.dispatchEvent(new Event(NetEventList.NETCONNECTION_CONNECT_SUCCESS));
-			var groupSpecifier:GroupSpecifier = new GroupSpecifier(model.groupSpecifier.groupName);
-			groupSpecifier.postingEnabled = true;
-			groupSpecifier.multicastEnabled = true;
-			groupSpecifier.setPublishPassword(model.groupSpecifier.passWord);
-			groupSpecifier.serverChannelEnabled = true;
+			
+			netStream = new NetStream(netConnection);
+			netStream.client = this;
+			netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
+			
+			if (model.application == ServerConfig.Application_MULTICAST) {
+				var groupSpecifier:GroupSpecifier = new GroupSpecifier(model.groupSpecifier.groupName);
+				groupSpecifier.postingEnabled = true;
+				groupSpecifier.multicastEnabled = true;
+				groupSpecifier.setPublishPassword(model.groupSpecifier.passWord);
+				groupSpecifier.serverChannelEnabled = true;
+				netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
+			}
 			
 //				netGroup = new NetGroup(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
 //				netGroup.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
@@ -123,9 +132,6 @@ package robotlegs.bender.P2PTest.Services
 //			pushMsg( '\ngroupSpecifier.groupspecWithoutAuthorizations():\n' + groupSpecifier.groupspecWithoutAuthorizations() );
 //			pushMsg( '\ngroupSpecifier.toString():\n' + groupSpecifier.toString() );
 //			
-			netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
-			netStream.client = this;
-			netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
 		}
 		private function onNetStreamConnect() : void
 		{

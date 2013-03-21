@@ -12,5 +12,7 @@ package robotlegs.bender.P2PTest.models
 		static public const Application_MULTICAST:String 	= "multicast";
 		static public const Application_P2P:String 			= "p2p";
 		static public const Application_STUDIO:String 		= "STUDIO";
+		
+		static public const STREAM_KEY_WEBCAM:String		= "webcam";
 	}
 }

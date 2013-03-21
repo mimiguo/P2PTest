@@ -4,6 +4,6 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
 	<s:Button id="play_btn" label="play" />
 	<s:BorderContainer backgroundColor="#000000" id="videoPlaceholder" width="500" height="500">
-		<s:VideoDisplay width="320" height="240" />
+		<!--<s:VideoDisplay width="320" height="240" id="vid"/>-->
 	</s:BorderContainer>
 </s:VGroup>
