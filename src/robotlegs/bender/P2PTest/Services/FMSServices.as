@@ -9,7 +9,8 @@ package robotlegs.bender.P2PTest.Services
 	import flash.net.NetStream;
 	
 	import robotlegs.bender.P2PTest.Event.NetEventList;
-	import robotlegs.bender.P2PTest.models.Server;
+	import robotlegs.bender.P2PTest.models.FMSModel;
+	import robotlegs.bender.P2PTest.models.ServerConfig;
 
 	public class FMSServices
 	{
@@ -17,8 +18,8 @@ package robotlegs.bender.P2PTest.Services
 		[Inject]
 		public var eventDispatcher:IEventDispatcher;
 		
-//		[Inject]
-//		public var model:
+		[Inject]
+		public var model:FMSModel;
 		
 		private var netConnection : NetConnection;
 		private var netGroup : NetGroup;
@@ -35,8 +36,8 @@ package robotlegs.bender.P2PTest.Services
 		
 		public function startConnect():void
 		{
-			trace(Server.TOBE+"/"+ Server.Application_MULTICAST);
-			netConnection.connect(Server.TOBE+"/"+Server.Application_MULTICAST);
+			trace(ServerConfig.TOBE+"/"+ ServerConfig.Application_MULTICAST);
+			netConnection.connect(ServerConfig.TOBE+"/"+ServerConfig.Application_MULTICAST);
 		}
 		
 		private function connectHandler(e:NetStatusEvent) : void 
@@ -52,8 +53,8 @@ package robotlegs.bender.P2PTest.Services
 					onDisconnect();
 					break; 
 				case "NetConnection.Connect.Success":
-					//						trace('netConnection.nearID', netConnection.nearID);
-					//						pushMsg('netConnection.nearID:'+ netConnection.nearID);
+//						trace('netConnection.nearID', netConnection.nearID);
+//						pushMsg('netConnection.nearID:'+ netConnection.nearID);
 					onConnect();
 					break;
 				
@@ -110,23 +111,23 @@ package robotlegs.bender.P2PTest.Services
 		private function onConnect() : void 
 		{
 //			testConnection.connect_btn.label="disconnect";
+			trace(model.groupSpecifier);	
+			var groupSpecifier:GroupSpecifier = new GroupSpecifier(model.groupSpecifier.groupName);
+			groupSpecifier.postingEnabled = true;
+			groupSpecifier.multicastEnabled = true;
+			groupSpecifier.setPublishPassword(model.groupSpecifier.passWord);
+			groupSpecifier.serverChannelEnabled = true;
 			
-			/*var groupSpecifier:GroupSpecifier = new GroupSpecifier(testConnection.groupName_ti.text);*/
-			//				groupSpecifier.postingEnabled = true;
-			/*groupSpecifier.multicastEnabled = true;
-			groupSpecifier.setPublishPassword(testConnection.pwd_ti.text);
-			groupSpecifier.serverChannelEnabled = true;*/
-			
-			//				netGroup = new NetGroup(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
-			//				netGroup.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
+//				netGroup = new NetGroup(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
+//				netGroup.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
 			
 //			pushMsg( '\ngroupSpecifier.groupspecWithAuthorizations():\n'    + groupSpecifier.groupspecWithAuthorizations() );
 //			pushMsg( '\ngroupSpecifier.groupspecWithoutAuthorizations():\n' + groupSpecifier.groupspecWithoutAuthorizations() );
 //			pushMsg( '\ngroupSpecifier.toString():\n' + groupSpecifier.toString() );
 //			
-			/*netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
+			netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
 			netStream.client = this;
-			netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);*/
+			netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
 		}
 		private function onNetStreamConnect() : void
 		{

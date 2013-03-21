@@ -1,11 +1,13 @@
 package robotlegs.bender.P2PTest.views
 {
+	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import mx.core.Application;
+	import flash.events.TextEvent;
 	
 	import robotlegs.bender.P2PTest.Event.EventsList;
-	import robotlegs.bender.P2PTest.models.Server;
+	import robotlegs.bender.P2PTest.models.ServerConfig;
+	import robotlegs.bender.P2PTest.models.vo.GroupSpecifierVO;
 	import robotlegs.bender.P2PTest.views.*;
 	import robotlegs.bender.bundles.mvcs.Mediator;
 	
@@ -16,7 +18,6 @@ package robotlegs.bender.P2PTest.views
 		
 		public override function initialize():void
 		{
-//			view.addEventListener(MouseEvent.CLICK, connect);
 			addViewListener(MouseEvent.CLICK, connect);
 		}
 		
@@ -25,7 +26,11 @@ package robotlegs.bender.P2PTest.views
 			if (view.connect_btn.label == "disconnect") {
 				return;
 			}
-			dispatch(new Event(EventsList.STARTCONNECT));
+			var vo:GroupSpecifierVO = new GroupSpecifierVO();
+			vo.groupName = view.groupName_ti.text;
+			vo.passWord  = view.pwd_ti.text;
+			var data:String = JSON.stringify(vo);
+			dispatch(new TextEvent(EventsList.STARTCONNECT, false, false, data));
 		}
 	}
 }
