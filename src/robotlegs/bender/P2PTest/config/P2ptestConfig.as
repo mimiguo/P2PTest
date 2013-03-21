@@ -30,7 +30,7 @@ package robotlegs.bender.P2PTest.config
 			injector.map(FMSModel).asSingleton();
 			injector.map(FMSServices).asSingleton();
 			mediatorMap.map(TestConnection).toMediator(TestConnectionMediator);
-//			commandMap.map(EventsList.STARTCONNECT, Event).toCommand(StartConnectCommand);
+			mediatorMap.map(Player).toMediator(PlayerMediator);
 			commandMap.map(EventsList.STARTCONNECT, flash.events.TextEvent).toCommand(StartConnectCommand);
 		}
 	}
