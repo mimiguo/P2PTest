@@ -7,6 +7,7 @@
 			   xmlns:views="robotlegs.bender.P2PTest.views.*"
 			   xmlns:p2pconf="robotlegs.bender.P2PTest.config.*"
 			   width="1000" height="1000"
+			   applicationComplete="init()"
 			   >
 	<fx:Declarations>
 		<rl2:ContextBuilder>
@@ -35,6 +36,7 @@
 			private var vidContainer:UIComponent;
 			private function init() : void 
 			{
+				trace('init');
 				netConnection = new NetConnection();
 				netConnection.client = this;
 				netConnection.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);			
@@ -113,20 +115,21 @@
 			{
 				connect_btn.label="disconnect";
 				
-				var groupSpecifier:GroupSpecifier = new GroupSpecifier(groupName_ti.text);
-				//				groupSpecifier.postingEnabled = true;
-				groupSpecifier.multicastEnabled = true;
-				groupSpecifier.setPublishPassword(pwd_ti.text);
-				groupSpecifier.serverChannelEnabled = true;
-				
+//				var groupSpecifier:GroupSpecifier = new GroupSpecifier(groupName_ti.text);
+//				//				groupSpecifier.postingEnabled = true;
+//				groupSpecifier.multicastEnabled = true;
+//				groupSpecifier.setPublishPassword(pwd_ti.text);
+//				groupSpecifier.serverChannelEnabled = true;
+//				
 				//				netGroup = new NetGroup(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
 				//				netGroup.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
 				
-				pushMsg( '\ngroupSpecifier.groupspecWithAuthorizations():\n'    + groupSpecifier.groupspecWithAuthorizations() );
-				pushMsg( '\ngroupSpecifier.groupspecWithoutAuthorizations():\n' + groupSpecifier.groupspecWithoutAuthorizations() );
-				pushMsg( '\ngroupSpecifier.toString():\n' + groupSpecifier.toString() );
+//				pushMsg( '\ngroupSpecifier.groupspecWithAuthorizations():\n'    + groupSpecifier.groupspecWithAuthorizations() );
+//				pushMsg( '\ngroupSpecifier.groupspecWithoutAuthorizations():\n' + groupSpecifier.groupspecWithoutAuthorizations() );
+//				pushMsg( '\ngroupSpecifier.toString():\n' + groupSpecifier.toString() );
 				
-				netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
+//				netStream = new NetStream(netConnection, groupSpecifier.groupspecWithoutAuthorizations());
+				netStream = new NetStream(netConnection);
 				netStream.client = this;
 				netStream.addEventListener(NetStatusEvent.NET_STATUS, connectHandler);
 			}
@@ -138,11 +141,13 @@
 					return;
 				}
 //				var p2p:String = TOBE+"/"+"multicast";
+				var p2p:String = TOBE+"/"+"live";
 //				var p2p:String = UMS+"/"+"XP3";
-				var p2p:String = UMS+"/"+"1";
+//				var p2p:String = UMS+"/"+"1";
 				//				var p2p:String = TOBE+"/"+"p2p/test";
 				pushMsg('connect '+p2p);
 				//				netConnection.connect(CIRRUS, DEVKEY);
+				trace('netConnection', netConnection);
 				netConnection.connect(p2p);
 			}
 			
@@ -209,7 +214,7 @@
 				vidContainer.addChild(vid);
 				
 				videoPlaceholder.addElement(vidContainer);
-				netStream.play('livestream');
+				netStream.play('webcam');
 				vid.attachNetStream(netStream);
 			}
 			
