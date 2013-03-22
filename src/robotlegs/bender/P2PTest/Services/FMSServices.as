@@ -135,6 +135,7 @@ package robotlegs.bender.P2PTest.Services
 		}
 		private function onNetStreamConnect() : void
 		{
+			trace("onNetStreamConnect");
 		}
 		
 		private function doDisconnect() : void 

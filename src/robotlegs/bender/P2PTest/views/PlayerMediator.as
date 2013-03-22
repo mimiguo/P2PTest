@@ -24,11 +24,11 @@ package robotlegs.bender.P2PTest.views
 		}
 		public override function initialize():void
 		{
+			addViewListener(MouseEvent.CLICK, play);
 			vid = new Video(320,240);
 			vidContainer = new UIComponent();
 			vidContainer.addChild(vid);
 			view.videoPlaceholder.addElement(vidContainer);
-			addViewListener(MouseEvent.CLICK, play);
 		}
 		private function play(e:MouseEvent):void
 		{
