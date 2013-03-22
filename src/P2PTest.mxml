@@ -214,8 +214,8 @@
 				vidContainer.addChild(vid);
 				
 				videoPlaceholder.addElement(vidContainer);
-				netStream.play('webcam');
 				vid.attachNetStream(netStream);
+				netStream.play('webcam');
 			}
 			
 			private function checkGroupString() :void
