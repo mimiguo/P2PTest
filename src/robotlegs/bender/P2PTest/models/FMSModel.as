@@ -7,6 +7,8 @@ package robotlegs.bender.P2PTest.models
 	public class FMSModel
 	{
 		public var groupSpecifier:Object;
+		public var application:String;
+		public var streamKey:String;
 		public function FMSModel()
 		{
 		}
