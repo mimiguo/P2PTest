@@ -25,9 +25,6 @@
 			private var netGroup : NetGroup;
 			private var joinGroup:Boolean = false;
 			private var sequenceNumber:int = 0;
-			private var netStream:NetStream;
-			private var vid:Video;
-			private var vidContainer:UIComponent;
 			
 			private function pushMsg(msg:String) : void
 			{

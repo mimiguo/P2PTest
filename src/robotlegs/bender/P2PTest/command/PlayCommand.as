@@ -11,12 +11,11 @@ package robotlegs.bender.P2PTest.command
 		public var service:FMSServices;
 		[Inject]
 		public var model:FMSModel;
-		
 		public override function execute():void
 		{
 			trace("play execute");
 			trace('service.netStream', service.netStream);	
-			service.netStream.play(model.streamKey);				
+			service.netStream.play(model.streamKey);
 		}
 	}
 }

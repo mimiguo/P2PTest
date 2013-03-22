@@ -28,16 +28,13 @@ package robotlegs.bender.P2PTest.views
 			vidContainer = new UIComponent();
 			vidContainer.addChild(vid);
 			view.videoPlaceholder.addElement(vidContainer);
-//			trace('service.netStream', service.netStream);
-			vid.attachNetStream(service.netStream);
 			addViewListener(MouseEvent.CLICK, play);
 		}
 		private function play(e:MouseEvent):void
 		{
-//			netStream.play('livestream');
-//			vid.attachNetStream(netStream);
 			if (e.target == view.play_btn) {
 				dispatch(new Event("play"));
+				vid.attachNetStream(service.netStream);
 			}
 		}
 	}
